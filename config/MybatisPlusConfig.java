@@ -21,11 +21,4 @@ public class MybatisPlusConfig {
     public OptimisticLockerInterceptor optimisticLockerInterceptor() {
         return new OptimisticLockerInterceptor();
     }
-
-    // 分页插件
-    @Bean
-    public PaginationInterceptor paginationInterceptor() {
-        return  new PaginationInterceptor();
-    }
-
 }

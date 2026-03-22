@@ -17,33 +17,19 @@ import com.alibaba.druid.stat.JdbcSqlStat;
 import com.alibaba.druid.stat.JdbcStatManager;
 import com.alibaba.druid.support.logging.Log;
 import com.alibaba.druid.support.logging.LogFactory;
-import com.alibaba.druid.util.DruidPasswordCallback;
-import com.alibaba.druid.util.Histogram;
-import com.alibaba.druid.util.JdbcUtils;
-import com.alibaba.druid.util.MySqlUtils;
-import com.alibaba.druid.util.StringUtils;
-import com.alibaba.druid.util.Utils;
+import com.alibaba.druid.util.*;
+
+import javax.management.JMException;
+import javax.management.ObjectName;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.sql.*;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -51,12 +37,6 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Logger;
-import javax.management.JMException;
-import javax.management.ObjectName;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.sql.DataSource;
 
 public abstract class DruidAbstractDataSource extends WrapperAdapter implements DruidAbstractDataSourceMBean, DataSource, DataSourceProxy, Serializable {
     private static final long serialVersionUID = 1L;
@@ -1590,7 +1570,7 @@ public abstract class DruidAbstractDataSource extends WrapperAdapter implements 
         return (Connection)conn;
     }
 
-    public DruidAbstractDataSource.PhysicalConnectionInfo createPhysicalConnection() throws SQLException {
+    public PhysicalConnectionInfo createPhysicalConnection() throws SQLException {
         String url = this.getUrl();
         Properties connectProperties = this.getConnectProperties();
         String user;
@@ -1678,7 +1658,7 @@ public abstract class DruidAbstractDataSource extends WrapperAdapter implements 
         long nano = System.nanoTime() - connectStartNanos;
         this.createTimespan += nano;
         creatingCountUpdater.decrementAndGet(this);
-        return new DruidAbstractDataSource.PhysicalConnectionInfo(conn, connectStartNanos, connectedNanos, initedNanos, validatedNanos, variables, globalVariables);
+        return new PhysicalConnectionInfo(conn, connectStartNanos, connectedNanos, initedNanos, validatedNanos, variables, globalVariables);
     }
 
     protected void setCreateError(Throwable ex) {
